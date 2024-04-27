@@ -1,0 +1,127 @@
+import os
+import tkinter as tk
+from PIL import Image, ImageTk
+
+class SampleApp(tk.Tk):
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        self.geometry("350x500")
+        self.container = tk.Frame(self)
+        self.container.pack(side="top", fill="both", expand=True)
+        self.pages = {}
+        for PageClass in (Page1, Page2, Page3):
+            page_name = PageClass.__name__
+            page = PageClass(parent=self.container, controller=self)
+            self.pages[page_name] = page
+            page.grid(row=0, column=0, sticky="nsew")
+        self.show_page("Page1")
+
+    def show_page(self, page_name):
+        page = self.pages[page_name]
+        page.tkraise()
+
+class Page1(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        title_label = tk.Label(self, text="Registration Screen", font=('Helvetica', 18))
+        title_label.pack(pady=10, padx=10)
+        username_label = tk.Label(self, text="Username:", font=('Helvetica', 12))
+        username_label.pack(pady=5, padx=10, anchor="w")
+        self.username_entry = tk.Entry(self, font=('Helvetica', 12), bd=2)
+        self.username_entry.pack(pady=5, padx=10, ipady=3, fill='x')
+        email_label = tk.Label(self, text="Email:", font=('Helvetica', 12))
+        email_label.pack(pady=5, padx=10, anchor="w")
+        self.email_entry = tk.Entry(self, font=('Helvetica', 12), bd=2)
+        self.email_entry.pack(pady=5, padx=10, ipady=3, fill='x')
+        image_label = tk.Label(self, text="Image URL:", font=('Helvetica', 12))
+        image_label.pack(pady=5, padx=10, anchor="w")
+        self.image_entry = tk.Entry(self, font=('Helvetica', 12), bd=2)
+        self.image_entry.pack(pady=5, padx=10, ipady=3, fill='x')
+        submit_button = tk.Button(self, text="Register", command=self.get_input, font=('Helvetica', 12))
+        submit_button.pack(pady=10, padx=10, anchor="w")
+        login_button = tk.Button(self, text="Login", command=lambda: controller.show_page("Page2"), font=('Helvetica', 12))
+        login_button.place(relx=0, rely=0, anchor="nw")
+
+    def get_input(self):
+        username = self.username_entry.get()
+        email = self.email_entry.get()
+        image_url = self.image_entry.get()
+        print("Username:", username)
+        print("Email:", email)
+        print("Image URL:", image_url)
+        self.controller.show_page("Page2")
+
+class Page2(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        title_label = tk.Label(self, text="Login Screen", font=('Helvetica', 18))
+        title_label.pack(pady=10, padx=10)
+        username_label = tk.Label(self, text="Username:", font=('Helvetica', 12))
+        username_label.pack(pady=5, padx=10, anchor="w")
+        self.username_entry = tk.Entry(self, font=('Helvetica', 12), bd=2)
+        self.username_entry.pack(pady=5, padx=10, ipady=3, fill='x')
+        password_label = tk.Label(self, text="Password:", font=('Helvetica', 12))
+        password_label.pack(pady=5, padx=10, anchor="w")
+        self.password_entry = tk.Entry(self, font=('Helvetica', 12), bd=2, show="*")
+        self.password_entry.pack(pady=5, padx=10, ipady=3, fill='x')
+        submit_button = tk.Button(self, text="Login", command=self.login, font=('Helvetica', 12))
+        submit_button.pack(pady=10, padx=10, anchor="w")
+        registration_button = tk.Button(self, text="Register", command=lambda: controller.show_page("Page1"), font=('Helvetica', 12))
+        registration_button.place(relx=0, rely=0, anchor="nw")
+        home_button = tk.Button(self, text="Home Page", command=lambda: controller.show_page("Page3"), font=('Helvetica', 12))
+        home_button.place(relx=0, rely=0, anchor="nw", y=30)
+
+    def login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+        print("Login with Username:", username)
+        print("Login with Password:", password)
+        self.controller.show_page("Page3")
+
+class Page3(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        title_label = tk.Label(self, text="Home Page", font=('Helvetica', 18))
+        title_label.pack(pady=10, padx=10)
+        username_label = tk.Label(self, text="Username:", font=('Helvetica', 12))
+        username_label.pack(pady=5, padx=10, anchor="w")
+        self.username_entry = tk.Entry(self, font=('Helvetica', 12), bd=2)
+        self.username_entry.pack(pady=5, padx=10, ipady=3, fill='x')
+        email_label = tk.Label(self, text="Email:", font=('Helvetica', 12))
+        email_label.pack(pady=5, padx=10, anchor="w")
+        self.email_entry = tk.Entry(self, font=('Helvetica', 12), bd=2)
+        self.email_entry.pack(pady=5, padx=10, ipady=3, fill='x')
+        image_label = tk.Label(self, text="Slika:", font=('Helvetica', 12))
+        image_label.pack(pady=5, padx=10, anchor="w")
+        self.image_label = tk.Label(self, text="", font=('Helvetica', 12))
+        self.image_label.pack(pady=5, padx=10, anchor="w")
+        
+        # Load and display image
+        image_path = "download.jpg"  # Adjust the path to your image
+        self.load_and_display_image(image_path)
+
+        registration_button = tk.Button(self, text="Register", command=lambda: controller.show_page("Page1"), font=('Helvetica', 12))
+        registration_button.pack(pady=10, padx=10, anchor="w")
+        login_button = tk.Button(self, text="Login", command=lambda: controller.show_page("Page2"), font=('Helvetica', 12))
+        login_button.pack(pady=10, padx=10, anchor="w")
+        azuriraj = tk.Button(self, text="Azuriraj podataka", command=lambda: controller.show_page("Page2"), font=('Helvetica', 12))
+        azuriraj.pack(pady=10, padx=10, anchor="w")
+        detektuj = tk.Button(self, text="Detektuj osobu na slici", command=lambda: controller.show_page("Page2"), font=('Helvetica', 12))
+        detektuj.pack(pady=10, padx=10, anchor="w")
+
+    def load_and_display_image(self, image_path):
+        if os.path.exists(image_path):
+            image = Image.open(image_path)
+            resized_image = image.resize((100, 100))  # Resize the image as needed
+            photo = ImageTk.PhotoImage(resized_image)
+            self.image_label.configure(image=photo)
+            self.image_label.image = photo  # Keep a reference to prevent garbage collection
+        else:
+            print("Image file not found:", image_path)
+
+if __name__ == "__main__":
+    app = SampleApp()
+    app.mainloop()
